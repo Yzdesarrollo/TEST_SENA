@@ -1,0 +1,96 @@
+﻿@page "/ListadoUsuarios"
+@inject IUserServices UserServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+
+<h2>Listado de Usuarios</h2>
+
+<div>
+    <NavLink class="btn btn-primary mb-2" href="RegistroUsuario" style="text-decoration:none;">Nuevo Usuario</NavLink>
+</div>
+
+@if (users == null)
+{
+    <span>No existen registros en la Base de Datos</span>
+}
+else if (users.Count == 0)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Tipo Documento</th>
+                        <th>Documento</th>
+                        <th>Direccion</th>
+                        <th>Rol</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in users)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>@user.Name</td>
+                            <td>@user.Surname</td>
+                            <td>@user.DocumentType</td>
+                            <td>@user.Document</td>
+                            <td>@user.Address</td>
+                            <td>@user.Rol.Name</td>
+
+                            <td>
+                                @*<NavLink href="@($"/Editarusuario/{user.Id}")" class="btn-warning">Editar</NavLink>*@
+                                <a class="btn btn-sm btn-success" @onclick="@(() =>EditUser(user.Id))"><i class="oi oi-pencil me-2"></i></a>
+                                <a class="btn btn-sm btn-danger" @onclick="@(() =>DeleteUser(user.Id))"><i class="oi oi-x me-2"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+
+    List<User> users = new List<User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReadUser();
+    }
+
+    async Task ReadUser()
+    {
+        users = await UserServices.GetAllUsers();
+    }
+    // Delete
+    private async Task DeleteUser(int id)
+    {
+        var SelectUser = users.FirstOrDefault(s => s.Id == id);
+        var result = await JS.InvokeAsync<bool>("confirm", $"Esta seguro de eliminar {SelectUser.Name}");
+
+        if (result)
+        {
+            await UserServices.DeleteUser(id);
+            await ReadUser();
+            StateHasChanged();
+        }
+    }
+
+    private void EditUser(int id)
+    {
+        nav.NavigateTo($"EditarUser/{id}");
+    }
+
+
+
+}

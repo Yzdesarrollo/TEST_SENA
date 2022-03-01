@@ -1,0 +1,91 @@
+﻿@page "/ListadoRoles"
+@inject IRolServices RolServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+@inject DialogService DialogService
+@inject NotificationService notificationService
+
+<h2>Listado Roles</h2>
+
+<div>
+    <RadzenButton Icon="group_add" Class="btn btn-sm btn-success m-1" Click=@CreateRol Text="Agregar"/>
+</div>
+
+@*<RadzenButton Text="Show success notification" 
+            Click="@(args => ShowNotification(new NotificationMessage() { Severity = NotificationSeverity.Success, Summary = "Operación Exitosa", Detail = "El Rol se ha agregado Exitosamente.", Duration = 2000 }))" />
+*@
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                PageSize="4" AllowPaging="true" AllowSorting="true" AllowColumnReorder="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TItem="Rol" Data="@roles" ColumnWidth="200px" EmptyText="No hay registros en Base de Datos.">
+    <Columns>
+        <RadzenDataGridColumn Width="50px" TItem="Rol" Property="Id" Sortable="false" Filterable="false" Title="ID" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn Width="150px" TItem="Rol" Property="Name" Sortable="true" Filterable="false" Title="Rol">
+            <FooterTemplate>
+                Total Roles: <b>@roles.Count()</b>
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="150px" TItem="Rol" Property="Id" Sortable="false" Filterable="false" Title="Acciones">
+            <Template Context="data">
+                <RadzenButton Icon="edit" Class="btn btn-sm btn-warning m-1" Click=@(() => EditRol(data.Id)) Text="Editar"/>
+                <RadzenButton Icon="delete" Class="btn btn-sm btn-danger m-1" Click=@(() => DeleteRol(data.Id)) Text="Eliminar"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    List<Rol> roles = new List<Rol>();
+    IList<Rol> selectedRol;   
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ReadRol();
+        //await InvokeAsync(StateHasChanged);
+    }
+
+    async Task ReadRol() => roles = await RolServices.GetAllRoles();
+
+
+    private async Task CreateRol()
+    {
+        var result = await DialogService.OpenAsync("Agregar Rol", ds =>
+    @<div>
+        <RolRegisterComponent />
+    </div>
+
+    );
+        //await InvokeAsync(StateHasChanged);
+        await ReadRol();        
+    }
+
+
+    private async Task EditRol(int id)
+    {
+        var result = await DialogService.OpenAsync("Editar Rol", ds =>
+    @<div>
+        <RolEditComponent Id="@id" />
+    </div>
+    );
+     await ReadRol();
+    }
+
+    private async Task DeleteRol(int id)
+    {
+        var SelectRol = roles.FirstOrDefault(r => r.Id == id);
+        var confirm = await DialogService.Confirm($"Esta seguro que desea eliminar {SelectRol.Name}?", "Eliminar Rol", new ConfirmOptions() { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
+
+        await RolServices.DeleteRol(id);
+        await ReadRol();
+    }
+
+
+    void ShowNotification(NotificationMessage message)
+    {
+        notificationService.Notify(message);
+    }
+
+}

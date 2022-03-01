@@ -1,0 +1,31 @@
+﻿@page "/EditarRol/{Id:int}"
+@inject IRolServices RolServices
+@inject NavigationManager nav
+
+<FormEditCreateComponent Rol="@rol" OnSubmit="@UpdateRol" TextButton="Editar" />
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Rol rol = new Rol();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var r1 = await RolServices.GetRolById(Id);
+        rol = new Rol() { Id = r1.Id, Name = r1.Name };
+        //await UpdateRol();
+        //StateHasChanged();
+    }
+
+    private async Task UpdateRol()
+    {
+        var r2 = new Rol() { Id = rol.Id, Name = rol.Name };
+        await RolServices.UpdateRol(r2.Id, r2);
+        //await InvokeAsync(StateHasChanged);
+
+        nav.NavigateTo("ListadoRoles");
+        //await Task.CompletedTask;
+    }
+}

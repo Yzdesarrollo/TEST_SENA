@@ -1,0 +1,32 @@
+﻿
+<EditForm Model="@Rol" OnValidSubmit="@OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="name" class="col-form-label">Nombre:</label>
+                <InputText id="name" @bind-Value="@Rol.Name" class="form-control" />
+                <ValidationMessage For="@(() => Rol.Name)" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <button type="submit" class="btn btn-success">@TextButton</button>
+            <NavLink class="btn btn-primary" href="ListadoRoles" style="text-decoration:none;">Regresar</NavLink>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Rol Rol { get; set; }
+
+    [Parameter]
+    public string TextButton { get; set; } = "";
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+}

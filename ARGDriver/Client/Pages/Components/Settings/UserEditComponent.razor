@@ -1,0 +1,60 @@
+﻿@page "/EditarUsuario/{Id:int}"
+@inject IUserServices UserServices
+@inject NavigationManager nav
+
+<h3>Editar Usuario</h3>
+
+@*<DataAnnotationsValidator />
+    <ValidationSummary />*@
+
+<EditForm Model="@s" OnValidSubmit="@UpdateUserU">
+    <DataAnnotationsValidator />
+  @*  <ValidationSummary />*@
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="name" class="col-form-label">Nombre Usuario:</label>
+                <InputText id="name" @bind-Value="@s.Name" class="form-control" />
+                <ValidationMessage For="@(() => s.Name)" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <NavLink class="btn btn-primary" href="ListadoUsuarios" style="text-decoration:none;">Regresar</NavLink>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private User s = new User();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Console.WriteLine($"Este es el Id encontrado -> {Id}");
+        var user = await UserServices.GetUserById(Id);
+
+        s = new User() { Id = user.Id, Name = user.Name };
+    }
+
+    private async Task UpdateUserU()
+    {
+        var s2 = new User() { Id = s.Id, Name = s.Name };
+
+        await UserServices.UpdateUser(Id, s2);
+      
+        nav.NavigateTo("ListadoUsuarios");
+          StateHasChanged();
+
+    }
+
+    protected void CancelUser()
+    {
+        nav.NavigateTo("ListadoUsuarios");
+
+    }
+}

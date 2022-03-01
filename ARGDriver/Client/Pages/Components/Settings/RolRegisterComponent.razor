@@ -1,0 +1,27 @@
+﻿@page "/RegistroRol"
+@inject IRolServices RolServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+
+@*<span style="@style">@mensaje</span>*@
+<FormEditCreateComponent Rol="@rol" OnSubmit="@CrearRol" TextButton="Registrar"/>
+
+@code {
+    public Rol rol = new Rol();
+
+    //string mensaje = "";
+    //string style = "color:blue";
+
+    //protected async override Task OnParametersSetAsync()
+    //{
+    //    await CrearRol();
+    //    StateHasChanged();
+    //}
+
+    async Task CrearRol()
+    {
+        var response = await RolServices.CreateRol(rol);
+        //if(response.IsSuccessSatusCode == true)
+        nav.NavigateTo("ListadoRoles");        
+    }
+}

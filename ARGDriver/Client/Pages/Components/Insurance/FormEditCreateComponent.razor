@@ -1,0 +1,19 @@
+﻿
+
+<h3>FormEditCreateComponent</h3>
+
+@code {
+     [Parameter]
+    public Insurer insurer { get; set; }
+
+    [Parameter]
+    public string TextButton { get; set; } = "";
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        
+    }
+}

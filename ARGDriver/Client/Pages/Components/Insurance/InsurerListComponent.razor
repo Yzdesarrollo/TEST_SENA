@@ -1,0 +1,95 @@
+﻿@page "/ListadoAseguradoras"
+@inject IInsurerServices InsurerServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+
+<h3>Listado Aseguradoras</h3>
+
+<div>
+    <NavLink class="btn btn-primary mb-2" href="RegistroAseguradora" style="text-decoration:none;">Nuevo Rol</NavLink>
+</div>
+
+@if (insurers == null)
+{
+    <span>No existen registros en la Base de Datos</span>
+}
+else if (insurers.Count == 0)
+{
+    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Nit</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var insurer in insurers)
+                    {
+                        <tr>
+                            <td>@insurer.Id</td>
+                            <td>@insurer.Name</td>
+                            <td>@insurer.Nit</td>
+                            <td>@insurer.Address</td>
+                            <td>@insurer.Phone</td>
+                            <td>@insurer.Email</td>
+                            <td>
+                                @*<NavLink href="@($"/EditarAseguradora/{insurer.Id}")" class="btn-warning">Editar</NavLink>*@
+                                <a class="btn btn-sm btn-success" @onclick="@(() =>EditInsurer(insurer.Id))"><i class="oi oi-pencil me-2"></i></a>
+                                <a class="btn btn-sm btn-danger" @onclick="@(() =>DeleteInsurer(insurer.Id))"><i class="oi oi-x me-2"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+@code {
+
+    List<Insurer> insurers = new List<Insurer>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReadInsurer();
+    }
+
+    async Task ReadInsurer()
+    {
+        insurers = await InsurerServices.GetAllInsurers();
+    }
+    // Delete
+    private async Task DeleteInsurer(int id)
+    {
+        var SelectInsurer = insurers.FirstOrDefault(i => i.Id == id);
+        var result = await JS.InvokeAsync<bool>("confirm", $"Esta seguro de eliminar {SelectInsurer.Name}");
+
+        if (result)
+        {
+            await InsurerServices.DeleteInsurer(id); 
+            //StateHasChanged();
+            await ReadInsurer();
+            
+        }
+    }
+
+    private void EditInsurer(int id)
+    {
+        nav.NavigateTo($"EditarAseguradora/{id}");
+    }
+
+
+
+}
+
