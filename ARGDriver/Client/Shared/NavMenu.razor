@@ -24,8 +24,18 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
             </NavLink>
         </div>
+        @*<div class="nav-item px-3">
+            <NavLink class="nav-link" href="ListadoService">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Calendario
+            </NavLink>
+        </div>*@
         <div class="nav-item px-3">
             <RadzenPanelMenu>
+@*//<<<<<<< Victor*@
+                <RadzenPanelMenuItem Text="Aseguradora" Path="ListadoAseguradoras" Icon="shield-car"></RadzenPanelMenuItem>
+@*//=======*@
+                <RadzenPanelMenuItem Text="Servicios" Path="ListadoService" Icon="verified_user"></RadzenPanelMenuItem>
+@*>>>>>>> master*@
                 <RadzenPanelMenuItem Text="Configuración" Icon="settings">
                     <RadzenPanelMenuItem Text="Admin Usuarios" Icon="manage_accounts">
                         <RadzenPanelMenuItem Text="Usuarios" Path="ListadoUsuarios" Icon="people"></RadzenPanelMenuItem>

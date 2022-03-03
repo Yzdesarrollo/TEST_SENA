@@ -1,0 +1,82 @@
+﻿@page "/ListadoService"
+@inject IServiceServices ServiceServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+@inject DialogService DialogService
+
+<h2>Listado Servicios</h2>
+
+<div>
+    <RadzenButton Icon="group_add" Class="btn btn-sm btn-success m-1" Click=@CreateService Text="Agregar"/>
+</div>
+
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                PageSize="4" AllowPaging="true" AllowSorting="true" AllowColumnReorder="true"
+                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                TItem="Service" Data="@services" ColumnWidth="200px" EmptyText="No hay registros en Base de Datos.">
+    <Columns>
+        <RadzenDataGridColumn Width="50px" TItem="Service" Property="Id" Sortable="false" Filterable="false" Title="ID" TextAlign="TextAlign.Center" />
+        <RadzenDataGridColumn Width="150px" TItem="Service" Property="Name" Sortable="true" Filterable="false" Title="Service">
+            <FooterTemplate>
+                Total Services: <b>@services.Count()</b>
+            </FooterTemplate>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn Width="150px" TItem="Service" Property="Id" Sortable="false" Filterable="false" Title="Acciones">
+            <Template Context="data">
+                <RadzenButton Icon="edit" Class="btn btn-sm btn-warning m-1" Click=@(() => EditService(data.Id)) Text="Editar"/>
+                <RadzenButton Icon="delete" Class="btn btn-sm btn-danger m-1" Click=@(() => DeleteService(data.Id)) Text="Eliminar"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    List<Service> services = new List<Service>();
+    IList<Service> selectedService;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ReadService();
+        //await InvokeAsync(StateHasChanged);
+    }
+
+    async Task ReadService() => services = await ServiceServices.GetAllServices();
+
+
+    private async Task CreateService()
+    {
+        var result = await DialogService.OpenAsync("Agregar Servicio", ds =>
+    @<div>
+        <ServiceRegisterComponent />
+    </div>
+   
+    );
+      //await InvokeAsync(StateHasChanged);
+      await ReadService();
+    }
+
+
+    private async Task EditService(int id)
+    {
+        var result = await DialogService.OpenAsync("Editar Servicio", ds =>
+    @<div>
+        <ServiceEditComponent Id="@id" />
+    </div>
+    );
+     await ReadService();
+    }
+
+    private async Task DeleteService(int id)
+    {
+        var SelectService = services.FirstOrDefault(r => r.Id == id);
+        var confirm = await DialogService.Confirm($"Esta seguro que desea eliminar {SelectService.Proceedings}?", "Eliminar Servicio", new ConfirmOptions() { OkButtonText = "Sí", CancelButtonText = "No" });
+
+        await ServiceServices.DeleteService(id);
+        await ReadService();
+    }
+
+
+}

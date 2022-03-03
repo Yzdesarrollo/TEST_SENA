@@ -5,21 +5,35 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ARGDriver.Server.Migrations
 {
-    public partial class NewInitialMigration : Migration
+    public partial class MigracionInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Evidences",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NameEvidence = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EvidencePicture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Evidences", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Insurers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "varchar(50)", nullable: true),
-                    Nit = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Address = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Phone = table.Column<string>(type: "varchar(50)", nullable: true),
-                    Email = table.Column<string>(type: "varchar(50)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Nit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,7 +46,7 @@ namespace ARGDriver.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "varchar(50)", nullable: false)
+                    Name = table.Column<string>(type: "varchar(30)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,12 +80,12 @@ namespace ARGDriver.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "varchar(50)", nullable: true),
-                    Surname = table.Column<string>(type: "varchar(50)", nullable: true),
+                    Name = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Surname = table.Column<string>(type: "varchar(100)", nullable: false),
                     DocumentType = table.Column<string>(type: "varchar(100)", nullable: true),
-                    Document = table.Column<string>(type: "varchar(100)", nullable: true),
+                    Document = table.Column<string>(type: "varchar(100)", nullable: false),
                     Address = table.Column<string>(type: "varchar(100)", nullable: true),
-                    RolId = table.Column<int>(type: "int", nullable: true),
+                    RolId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -81,7 +95,8 @@ namespace ARGDriver.Server.Migrations
                         name: "FK_Users_Roles_RolId",
                         column: x => x.RolId,
                         principalTable: "Roles",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -92,6 +107,9 @@ namespace ARGDriver.Server.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Evidences");
+
             migrationBuilder.DropTable(
                 name: "Insurers");
 

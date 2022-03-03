@@ -1,19 +1,51 @@
 ﻿
-
-<h3>FormEditCreateComponent</h3>
+<EditForm Model="@Insurer" OnValidSubmit="@OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="name" class="col-form-label">Nombre Aseguradora:</label>
+                <InputText id="name" @bind-Value="@Insurer.Name" class="form-control" />
+                <ValidationMessage For="@(() => Insurer.Name)" />
+            </div>
+            <div class="form-group">
+                <label for="nit" class="col-form-label">Nit Aseguradora:</label>
+                <InputText id="nit" @bind-Value="@Insurer.Nit" class="form-control" />
+                <ValidationMessage For="@(() => Insurer.Nit)" />
+            </div>
+            <div class="form-group">
+                <label for="address" class="col-form-label">Dirección Aseguradora:</label>
+                <InputText id="address" @bind-Value="@Insurer.Address" class="form-control" />
+                <ValidationMessage For="@(() => Insurer.Address)" />
+            </div>
+            <div class="form-group">
+                <label for="Phone" class="col-form-label">Teléfono Aseguradora:</label>
+                <InputText id="Phone" @bind-Value="@Insurer.Phone" class="form-control" />
+                <ValidationMessage For="@(() => Insurer.Phone)" />
+            </div>
+            <div class="form-group">
+                <label for="email" class="col-form-label">Email Aseguradora:</label>
+                <InputText id="email" @bind-Value="@Insurer.Email" class="form-control" />
+                <ValidationMessage For="@(() => Insurer.Email)" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">@TextButton</button>
+                <NavLink class="btn btn-primary" href="ListadoRoles" style="text-decoration:none;">Regresar</NavLink>
+            </div>
+        </div>
+    </div>
+</EditForm>
 
 @code {
-     [Parameter]
-    public Insurer insurer { get; set; }
+
+    [Parameter]
+    public Insurer Insurer { get; set; }
 
     [Parameter]
     public string TextButton { get; set; } = "";
 
     [Parameter]
-    public EventCallback OnValidSubmit { get; set; }
-
-    protected async override Task OnParametersSetAsync()
-    {
-        
-    }
+    public EventCallback OnSubmit { get; set; }
+ 
 }
+

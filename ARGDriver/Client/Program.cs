@@ -14,9 +14,14 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 // Servicios Rol
 builder.Services.AddScoped<IRolServices, RolServices>();
 
+//Servicios Victor
+builder.Services.AddScoped<IInsurerServices, InsurerServices>();
+
 // <<<<<<< yuliana
 //Servicios Usuario
 builder.Services.AddScoped<IUserServices, UserServices>();
+//Servicios Servicios
+builder.Services.AddScoped<IServiceServices, ServiceServices>();
 // =======
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();

@@ -3,56 +3,21 @@
 @inject NavigationManager nav
 @inject IJSRuntime jS
 
-<h3>Registrar Aseguradora</h3>
 
-<EditForm Model="@insurer" OnValidSubmit="@CrearInsurer">
-    <DataAnnotationsValidator />
-  @*  <ValidationSummary />*@
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="name" class="col-form-label">Nombre Aseguradora:</label>
-                <InputText id="name" @bind-Value="@insurer.Name" class="form-control" />
-                <ValidationMessage For="@(() => insurer.Name)" />
-            </div>
-             <div class="form-group">
-                <label for="nit" class="col-form-label">Nit Aseguradora:</label>
-                <InputText id="nit" @bind-Value="@insurer.Nit" class="form-control" />
-                <ValidationMessage For="@(() => insurer.Nit)" />
-            </div>
-             <div class="form-group">
-                <label for="address" class="col-form-label">Dirección Aseguradora:</label>
-                <InputText id="address" @bind-Value="@insurer.Address" class="form-control" />
-                <ValidationMessage For="@(() => insurer.Address)" />
-            </div>
-             <div class="form-group">
-                <label for="phone" class="col-form-label">Teléfono Aseguradora:</label>
-                <InputText id="phone" @bind-Value="@insurer.Phone" class="form-control" />
-                <ValidationMessage For="@(() => insurer.Phone)" />
-            </div>
-             <div class="form-group">
-                <label for="email" class="col-form-label">Email Aseguradora:</label>
-                <InputText id="email" @bind-Value="@insurer.Email" class="form-control" />
-                <ValidationMessage For="@(() => insurer.Email)" />
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">Guardar</button>
-                <NavLink class="btn btn-primary" href="ListadoAseguradoras" style="text-decoration:none;">Regresar</NavLink>
-            </div>
-        </div>
-    </div>
-</EditForm>
+<FormEditCreateComponent Insurer="@insurer" OnSubmit="@CrearInsurer" TextButton="Registrar"/>
 
 @code {
     public Insurer insurer = new Insurer();
 
+    //protected async override Task OnParametersSetAsync()
+    //{
+    //    await CrearInsurer();
+    //    StateHasChanged();
+    //}
+
     async Task CrearInsurer()
     {
         var response = await InsurerServices.CreateInsurer(insurer);
-        //var result = await JS.InvokeAsync<bool>("confirm", $"Esta seguro de eliminar {response}");
-        nav.NavigateTo("ListadoAseguradoras");
-        
+        nav.NavigateTo("ListadoAseguradoras");        
     }
-
 }
-

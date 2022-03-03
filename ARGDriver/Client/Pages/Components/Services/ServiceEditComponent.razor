@@ -1,0 +1,31 @@
+﻿@page "/EditarService/{Id:int}"
+@inject IServiceServices ServiceServices
+@inject NavigationManager nav
+
+<FormEditCreateComponentService Service="@Service" OnSubmit="@UpdateService" TextButton="Editar" />
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Service Service = new Service();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        var r1 = await ServiceServices.GetServiceById(Id);
+        Service = new Service() { Id = r1.Id, Proceedings = r1.Proceedings };
+        //await UpdateService();
+        //StateHasChanged();
+    }
+
+    private async Task UpdateService()
+    {
+        var r2 = new Service() { Id = Service.Id, Proceedings = Service.Proceedings };
+        await ServiceServices.UpdateService(r2.Id, r2);
+        //await InvokeAsync(StateHasChanged);
+
+        nav.NavigateTo("ListadoServices");
+        //await Task.CompletedTask;
+    }
+}

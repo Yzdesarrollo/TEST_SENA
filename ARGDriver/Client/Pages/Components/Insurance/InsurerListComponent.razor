@@ -2,94 +2,88 @@
 @inject IInsurerServices InsurerServices
 @inject NavigationManager nav
 @inject IJSRuntime JS
+@inject DialogService DialogService
 
 <h3>Listado Aseguradoras</h3>
 
 <div>
-    <NavLink class="btn btn-primary mb-2" href="RegistroAseguradora" style="text-decoration:none;">Nuevo Rol</NavLink>
+    <RadzenButton Icon="group_add" Class="btn btn-sm btn-success m-1" Click=@CreateInsurer Text="Agregar"/>
 </div>
 
-@if (insurers == null)
-{
-    <span>No existen registros en la Base de Datos</span>
-}
-else if (insurers.Count == 0)
-{
-    <RadzenProgressBar Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
-}
-else
-{
-    <div class="container">
-        <div class="row">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Nit</th>
-                        <th>Dirección</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var insurer in insurers)
-                    {
-                        <tr>
-                            <td>@insurer.Id</td>
-                            <td>@insurer.Name</td>
-                            <td>@insurer.Nit</td>
-                            <td>@insurer.Address</td>
-                            <td>@insurer.Phone</td>
-                            <td>@insurer.Email</td>
-                            <td>
-                                @*<NavLink href="@($"/EditarAseguradora/{insurer.Id}")" class="btn-warning">Editar</NavLink>*@
-                                <a class="btn btn-sm btn-success" @onclick="@(() =>EditInsurer(insurer.Id))"><i class="oi oi-pencil me-2"></i></a>
-                                <a class="btn btn-sm btn-danger" @onclick="@(() =>DeleteInsurer(insurer.Id))"><i class="oi oi-x me-2"></i></a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-}
+<div class="d-flex">
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true"
+                    PageSize="4" AllowPaging="true" AllowSorting="true" AllowColumnReorder="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    TItem="Insurer" Data="@insurers" ColumnWidth="200px" EmptyText="No hay registros en Base de Datos.">
+        <Columns>
+            <RadzenDataGridColumn Width="50px" TItem="Insurer" Property="Id" Sortable="false" Filterable="false" Title="ID" TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Name" Sortable="true" Filterable="false" Title="Nombre" />
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Nit" Sortable="true" Filterable="false" Title="NIt" />
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Address" Sortable="true" Filterable="false" Title="Dirección" />
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Phone" Sortable="true" Filterable="false" Title="Teléfono" />
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Email" Sortable="true" Filterable="false" Title="Email">
+                <FooterTemplate>
+                    Total Aseguradoras: <b>@insurers.Count()</b>
+                </FooterTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Width="150px" TItem="Insurer" Property="Id" Sortable="false" Filterable="false" Title="Acciones">
+                <Template Context="data">
+                    <RadzenButton Icon="edit" Class="btn btn-sm btn-warning m-1" Click=@(() => EditInsurer(data.Id)) Text="Editar"/>
+                    <RadzenButton Icon="delete" Class="btn btn-sm btn-danger m-1" Click=@(() => DeleteInsurer(data.Id)) Text="Eliminar"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</div>
 
 @code {
 
     List<Insurer> insurers = new List<Insurer>();
+    IList<Insurer> selectedInsurer;
 
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnParametersSetAsync()
     {
         await ReadInsurer();
+        //await InvokeAsync(StateHasChanged);
     }
 
-    async Task ReadInsurer()
+    async Task ReadInsurer() => insurers = await InsurerServices.GetAllInsurers();
+
+
+    private async Task CreateInsurer()
     {
-        insurers = await InsurerServices.GetAllInsurers();
+        var result = await DialogService.OpenAsync("Agregar Aseguradora", ds =>
+    @<div>
+        <InsurerRegisterComponent />
+    </div>
+   
+    );
+      //await InvokeAsync(StateHasChanged);
+      await ReadInsurer();
     }
-    // Delete
+
+
+    private async Task EditInsurer(int id)
+    {
+        var result = await DialogService.OpenAsync("Editar Aseguradora", ds =>
+    @<div>
+        <InsurerEditComponent Id="@id" />
+    </div>
+    );
+     await ReadInsurer();
+    }
+
     private async Task DeleteInsurer(int id)
     {
         var SelectInsurer = insurers.FirstOrDefault(i => i.Id == id);
-        var result = await JS.InvokeAsync<bool>("confirm", $"Esta seguro de eliminar {SelectInsurer.Name}");
+        var confirm = await DialogService.Confirm($"Esta seguro que desea eliminar {SelectInsurer.Name}?", "Eliminar Aseguradora", new ConfirmOptions() { OkButtonText = "Eliminar", CancelButtonText = "Cancelar" });
 
-        if (result)
-        {
-            await InsurerServices.DeleteInsurer(id); 
-            //StateHasChanged();
-            await ReadInsurer();
-            
-        }
+        await InsurerServices.DeleteInsurer(id);
+        await ReadInsurer();
     }
-
-    private void EditInsurer(int id)
-    {
-        nav.NavigateTo($"EditarAseguradora/{id}");
-    }
-
 
 
 }
+
 

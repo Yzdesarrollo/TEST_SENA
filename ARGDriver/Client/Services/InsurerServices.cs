@@ -1,9 +1,10 @@
-﻿using ARGDriver.Shared.Models.Insurance;
+﻿using ARGDriver.Client.Interfaces;
+using ARGDriver.Shared.Models.Insurance;
 using System.Net.Http.Json;
 
 namespace ARGDriver.Client.Services
 {
-    public class InsurerServices
+    public class InsurerServices : IInsurerServices
     {
         private readonly HttpClient _httpClient;
 
@@ -13,9 +14,9 @@ namespace ARGDriver.Client.Services
         }
 
         // cambios
-        const string BASE_URL = "/api/Rol";
+        const string BASE_URL = "/api/Insurer";
 
-        public async Task<List<Insurer>> GetAllRoles()
+        public async Task<List<Insurer>> GetAllInsurers()
         {
             var response = await _httpClient.GetFromJsonAsync<List<Insurer>>($"{BASE_URL}");
             return response;

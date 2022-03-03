@@ -10,6 +10,6 @@ namespace ARGDriver.Shared.Models.Services
     {
         public int Id { get; set; }
         public string NameEvidence { get; set; }
-        // public image EvidencePicture  { get; set; }
+        public string EvidencePicture  { get; set; }
     }
 }

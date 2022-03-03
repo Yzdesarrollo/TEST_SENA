@@ -50,11 +50,15 @@ namespace ARGDriver.Client.Services
             return null;
         }
 
-        public async Task<User> DeleteUser(int id)
+        public async Task<bool> DeleteUser(int id)
         {
             var response = await _httpClient.DeleteAsync($"{BASE_URL}/{id}");
-            var deleteUser = await response.Content.ReadFromJsonAsync<User>();
-            return deleteUser;
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

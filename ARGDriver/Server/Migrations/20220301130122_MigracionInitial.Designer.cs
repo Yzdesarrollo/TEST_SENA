@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ARGDriver.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220222190247_NewInitialMigration")]
-    partial class NewInitialMigration
+    [Migration("20220301130122_MigracionInitial")]
+    partial class MigracionInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -50,6 +50,25 @@ namespace ARGDriver.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Insurers");
+                });
+
+            modelBuilder.Entity("ARGDriver.Shared.Models.Services.Evidences", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("EvidencePicture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEvidence")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Evidences");
                 });
 
             modelBuilder.Entity("ARGDriver.Shared.Models.Services.Service", b =>
@@ -123,21 +142,24 @@ namespace ARGDriver.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Document")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DocumentType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RolId")
+                    b.Property<int>("RolId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
                     b.Property<string>("Surname")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -150,10 +172,17 @@ namespace ARGDriver.Server.Migrations
             modelBuilder.Entity("ARGDriver.Shared.Models.Settings.User", b =>
                 {
                     b.HasOne("ARGDriver.Shared.Models.Settings.Rol", "Rol")
-                        .WithMany()
-                        .HasForeignKey("RolId");
+                        .WithMany("Users")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Rol");
+                });
+
+            modelBuilder.Entity("ARGDriver.Shared.Models.Settings.Rol", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

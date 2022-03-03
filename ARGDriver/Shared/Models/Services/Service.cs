@@ -13,12 +13,12 @@ namespace ARGDriver.Shared.Models.Services
         // RAMA wilfer
 
         public int Id { get; set; }
+
         [Required(ErrorMessage = "*El expediente es requerido.")]
-        [RegularExpression("^[a-zA-Z áéíóú][0-9]+$", ErrorMessage = "Solo se permiten letras y números.")]
         [Display(Name = "Expediente")]
         public string Proceedings { get; set; }
+
         [Required(ErrorMessage = "*La placa es requerida.")]
-        [RegularExpression("^[a-zA-Z áéíóú][0-9]+$", ErrorMessage = "Solo se permiten letras y números.")]
         [Display(Name = "Placa del vehículo")]
         public string LicensePlate { get; set; }
         [Display(Name = "Fecha")]

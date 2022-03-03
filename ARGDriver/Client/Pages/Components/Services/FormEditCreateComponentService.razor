@@ -1,0 +1,30 @@
+﻿
+<EditForm Model="@Service" OnValidSubmit="@OnSubmit">
+    <DataAnnotationsValidator />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Proceedings" class="col-form-label">Nombre Service:</label>
+                <InputText id="Proceedings" @bind-Value="@Service.Proceedings" class="form-contService" />
+                <ValidationMessage For="@(() => Service.Proceedings)" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">@TextButton</button>
+                <NavLink class="btn btn-primary" href="ListadoServices" style="text-decoration:none;">Regresar</NavLink>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public Service Service { get; set; }
+
+    [Parameter]
+    public string TextButton { get; set; } = "";
+
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+ 
+}

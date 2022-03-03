@@ -72,6 +72,7 @@ else
     {
         users = await UserServices.GetAllUsers();
     }
+
     // Delete
     private async Task DeleteUser(int id)
     {
@@ -88,7 +89,7 @@ else
 
     private void EditUser(int id)
     {
-        nav.NavigateTo($"EditarUser/{id}");
+        nav.NavigateTo($"/EditarUsuario/{id}");
     }
 
 

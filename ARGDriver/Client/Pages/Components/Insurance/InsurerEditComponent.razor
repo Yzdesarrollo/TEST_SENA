@@ -4,78 +4,30 @@
 
 <h3>Editar Aseguradora</h3>
 
-@*<DataAnnotationsValidator />
-    <ValidationSummary />*@
-
-<EditForm Model="@i" OnValidSubmit="@UpdateInsurerU">
-    <DataAnnotationsValidator />
-  @*  <ValidationSummary />*@
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="name" class="col-form-label">Nombre Aseguradora:</label>
-                <InputText id="name" @bind-Value="@i.Name" class="form-control" />
-                <ValidationMessage For="@(() => i.Name)" />
-            </div>
-            <div class="form-group">
-                <label for="nit" class="col-form-label">Nit Aseguradora</label>
-                <InputText id="nit" @bind-Value="@i.Nit" class="form-control" />
-                <ValidationMessage For="@(() => i.Nit)" />
-            </div>
-            <div class="form-group">
-                <label for="address" class="col-form-label">Dirección Aseguradora</label>
-                <InputText id="address" @bind-Value="@i.Address" class="form-control" />
-                <ValidationMessage For="@(() => i.Address)" />
-            </div>
-            <div class="form-group">
-                <label for="phone" class="col-form-label">Teléfono Aseguradora</label>
-                <InputText id="phone" @bind-Value="@i.Phone" class="form-control" />
-                <ValidationMessage For="@(() => i.Phone)" />
-            </div>
-            <div class="form-group">
-                <label for="email" class="col-form-label">Email Aseguradora</label>
-                <InputText id="email" @bind-Value="@i.Email" class="form-control" />
-                <ValidationMessage For="@(() => i.Email)" />
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">Guardar</button>
-                <NavLink class="btn btn-primary" href="ListadoAseguradoras" style="text-decoration:none;">Regresar</NavLink>
-            </div>
-        </div>
-    </div>
-</EditForm>
-
+<FormEditCreateComponent Insurer="@insurer" OnSubmit="@UpdateInsurer" TextButton="Editar" />
 
 @code {
 
     [Parameter]
     public int Id { get; set; }
 
-    public Insurer i = new Insurer();
+    private Insurer insurer = new Insurer();
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
-        Console.WriteLine($"Este es el Id encontrado -> {Id}");
-        var insurer = await InsurerServices.GetInsurerById(Id);
-
-        i = new Insurer() { Id = insurer.Id, Name = insurer.Name,Nit= insurer.Nit, Address=insurer.Address, Phone=insurer.Phone, Email=insurer.Email  };
+        var r1 = await InsurerServices.GetInsurerById(Id);
+        insurer = new Insurer() { Id = r1.Id, Name = r1.Name, Nit = r1.Nit, Address = r1.Address, Phone = r1.Phone, Email = r1.Email };
+        //await UpdateInsurer();
+        //StateHasChanged();
     }
 
-    private async Task UpdateInsurerU()
+    private async Task UpdateInsurer()
     {
-        var i2 = new Insurer() { Id = i.Id, Name = i.Name, Nit= i.Nit, Address=i.Address, Phone=i.Phone, Email=i.Email};
+        var r2 = new Insurer() { Id = insurer.Id, Name = insurer.Name, Nit = insurer.Nit, Address = insurer.Address, Phone = insurer.Phone, Email = insurer.Email };
+        await InsurerServices.UpdateInsurer(r2.Id, r2);
+        //await InvokeAsync(StateHasChanged);
 
-        await InsurerServices.UpdateInsurer(i2.Id, i2);
-      
-        nav.NavigateTo("ListadoAsegusradora");
-          StateHasChanged();
-
-    }
-
-    protected void CancelInsurer()
-    {
         nav.NavigateTo("ListadoAseguradoras");
-
+        //await Task.CompletedTask;
     }
 }
-

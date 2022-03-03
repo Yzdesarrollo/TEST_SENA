@@ -8,6 +8,6 @@ namespace ARGDriver.Client.Interfaces
         Task<User> GetUserById(int id);
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(int id, User user);
-        Task<User> DeleteUser(int id);
+        Task<bool> DeleteUser(int id);
     }
 }

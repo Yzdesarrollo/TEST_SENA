@@ -24,5 +24,8 @@ namespace ARGDriver.Server.Data
         //Creacion tabla Servicios
         public DbSet<Service> Services { get; set; }
 
+        // Creación tabla Evidencias
+        public DbSet<Evidences> Evidences { get; set; }
+
     }
 }

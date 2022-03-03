@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ARGDriver.Shared.Models.Settings
@@ -17,5 +18,8 @@ namespace ARGDriver.Shared.Models.Settings
         [RegularExpression("^[a-zA-Z áéíóú]+$", ErrorMessage = "*Solo se permiten letras.")]
         public string Name { get; set; }
 
+        //Navigational Property
+        [JsonIgnore]
+        public ICollection<User> Users { get; set; }
     }
 }

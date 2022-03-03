@@ -1,0 +1,24 @@
+﻿@page "/RegistroService"
+@inject IServiceServices ServiceServices
+@inject NavigationManager nav
+@inject IJSRuntime JS
+
+<h3>Registrar Nuevo Service</h3>
+
+<FormEditCreateComponentService Service="@Service" OnSubmit="@CrearService" TextButton="Registrar"/>
+
+@code {
+    public Service Service = new Service();
+
+    //protected async override Task OnParametersSetAsync()
+    //{
+    //    await CrearService();
+    //    StateHasChanged();
+    //}
+
+    async Task CrearService()
+    {
+        var response = await ServiceServices.CreateService(Service);
+        nav.NavigateTo("ListadoServices");        
+    }
+}

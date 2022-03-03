@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Pages\Components\Services\RolListComponent.razor.css" />
     <None Remove="Pages\Components\Settings\RolListComponent.razor.css" />
   </ItemGroup>
 
@@ -32,10 +33,6 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Components\Services\" />
   </ItemGroup>
 
 </Project>

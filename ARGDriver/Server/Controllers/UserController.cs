@@ -22,8 +22,12 @@ namespace ARGDriver.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
-            //var UserList = await _context.Users.OrderBy(s => s.Name).ToListAsync();
-            return await _context.Users.ToListAsync();
+            var UserList = await _context.Users
+                .Include(u => u.Rol)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return UserList;
 
         }
 
@@ -31,8 +35,9 @@ namespace ARGDriver.Server.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            //var user2 = await _context.Users.Where(s => s.Id == id).FirstOrDefaultAsync();
+            var user = await _context.Users
+                .Include(u => u.Rol)
+                .FirstOrDefaultAsync(user => user.Id == id);
 
             if (user == null)
                 return BadRequest("No se encontro el registro");
@@ -44,17 +49,26 @@ namespace ARGDriver.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
-            try
+            if (ModelState.IsValid)
             {
-                await _context.AddAsync(user);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    //var role = await _context.Roles.FindAsync(rol.Id);
+                    //if (role == null) return BadRequest();
 
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                    await _context.AddAsync(user);
+                    await _context.SaveChangesAsync();                  
+
+                    return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                }
+
+                catch
+                {
+                    return BadRequest();
+                }
             }
-            catch
-            {
-                return BadRequest();
-            }
+
+            return NotFound();
         }
 
         //// PUT api/<UserController>/5
@@ -62,16 +76,34 @@ namespace ARGDriver.Server.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update(int id, User user)
         {
-            //var userExist = await _context.Users.FirstOrDefaultAsync(s => s.Id == id);
-            if (id != user.Id)
+            if (id != user.Id || user == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            var userUpdate= _context.Users
+                .Include(u => u.Rol)
+                //.ThenInclude(r => r.Name)
+                .FirstOrDefault(u => u.Id == id);
+
+            if (userUpdate == null)
+                return NotFound();
+
+            //_context.Entry(user).State = EntityState.Modified;
+
+            userUpdate.Id = user.Id;
+            userUpdate.Name = user.Name;
+            userUpdate.Surname = user.Surname;
+            userUpdate.DocumentType = user.DocumentType;
+            userUpdate.Document = user.Document;
+            userUpdate.Address = user.Address;
+            userUpdate.RolId = user.RolId;
+            userUpdate.Rol = user.Rol;
+            userUpdate.Status = user.Status;           
 
             try
             {
+                _context.Users.Update(userUpdate);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -87,6 +119,7 @@ namespace ARGDriver.Server.Controllers
             }
 
             return Accepted();
+            //return Ok(userUpdate);
         }
 
         //// DELETE api/<UserController>/5
